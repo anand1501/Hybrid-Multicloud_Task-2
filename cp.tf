@@ -1,21 +1,21 @@
 //connection with aws
 
 provider "aws" {
-     profile = "chinmay"  //Enter your profile Name 
+     profile = "Anand"  //Enter your profile Name 
      region  = "ap-south-1"
 }
 
 //connection with aws end
 //create s3 bucket
 
-resource "aws_s3_bucket" "chirags3"{
-  bucket = "cprince77"
+resource "aws_s3_bucket" "my_bucket"{
+  bucket = "anand123"
   acl    = "private"
   region = "ap-south-1"
   force_destroy= true
 
   tags = {
-    Name        = "cprince77"
+    Name        = "anand123"
   }
 }
 //create s3 bucket end
@@ -31,9 +31,9 @@ locals{
 
 //creat cloud front
 
-resource "aws_cloudfront_distribution" "s3chinmay" {
+resource "aws_cloudfront_distribution" "s3cloudfront" {
   origin{
-    domain_name =  aws_s3_bucket.chirags3.bucket_regional_domain_name
+    domain_name =  aws_s3_bucket.my_bucket.bucket_regional_domain_name
     origin_id   =  local.s3_origin_id
 
     s3_origin_config{
@@ -135,10 +135,10 @@ resource "aws_cloudfront_distribution" "s3chinmay" {
 resource "null_resource" "download_IP"{
 
     depends_on = [
-    aws_cloudfront_distribution.s3chinmay,
+    aws_cloudfront_distribution.s3cloudfront,
     ]
     provisioner "local-exec"{
-          command = "echo ${aws_cloudfront_distribution.s3chinmay.domain_name
+          command = "echo ${aws_cloudfront_distribution.s3cloudfront.domain_name
 }} > your_static_files_domain.text "   //you will get your ip address in "yourdomain.txt" file in directory where you run this code    
       }
   }
@@ -151,7 +151,7 @@ resource "null_resource" "download_IP"{
     null_resource.download_IP,
     ]
     provisioner "local-exec"{
-          command = "aws s3 sync C:/Users/OM/Desktop/cloud1 s3://cprince77 --acl public-read" 
+          command = "aws s3 sync C:/Users/KIIT/Desktop/LinuxWorld/terraform/task2 s3://anand123 --acl public-read" 
          //change the path for the folder you want to upload just like all inside "cloud1" folder is uploading here
       }
   }
@@ -165,7 +165,7 @@ resource "aws_s3_bucket_public_access_block" "bpa"{
 depends_on = [
     null_resource.upload_files,
     ]
-	bucket=aws_s3_bucket.chirags3.id
+	bucket=aws_s3_bucket.my_bucket.id
 	block_public_acls = true
 	block_public_policy = true
 	restrict_public_buckets = true
